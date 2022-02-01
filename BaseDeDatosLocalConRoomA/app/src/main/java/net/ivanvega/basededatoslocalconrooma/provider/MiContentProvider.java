@@ -6,6 +6,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.InetAddresses;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -110,40 +111,55 @@ public class MiContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri,
                       @Nullable ContentValues contentValues) {
-
         AppDatabase db =
                 AppDatabase.getDatabaseInstance(getContext());
-
         Cursor cursor= null;
-
         UserDao dao = db.userDao();
-
+        User usuario= new User();;
         switch (sURIMatcher.match(uri)){
             case 1:
 
-                User usuario = new User();
                 usuario.firstName = contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME);
                 usuario.lastName = contentValues.getAsString(UsuarioContrato.COLUMN_LASTNAME);
 
-                dao.insertAll(usuario);
-
-
-                break;
+                long  newid = dao.insert(usuario);
+                return  Uri.withAppendedPath(uri, String.valueOf( newid));
 
         }
 
-
-        return null;
+        return   Uri.withAppendedPath(uri, String.valueOf( -1))  ;
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
+
+        switch (sURIMatcher.match(uri)){
+            case 2:
+
+                break;
+        }
+
         return 0;
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues,
+                          @Nullable String s, @Nullable String[] strings) {
+
+         int id  = Integer.parseInt( uri.getLastPathSegment());
+
+        AppDatabase db =
+                AppDatabase.getDatabaseInstance(getContext());
+        Cursor cursor= null;
+        UserDao dao = db.userDao();
+
+        List<User> usuarioUpdate  =  dao.loadAllByIds(new int[]{id});
+
+        usuarioUpdate.get(0).firstName =
+                contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME
+        );
+
+        return dao.updateUser(usuarioUpdate.get(0));
     }
 
 }

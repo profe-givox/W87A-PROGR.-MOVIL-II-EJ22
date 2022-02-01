@@ -2,13 +2,39 @@ package com.example.clientecontentprovider;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.UserDictionary;
 import android.util.Log;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private void consultarContentProvider(){
+        Cursor cursor = getContentResolver().query(
+                UsuarioContrato.CONTENT_URI,
+                UsuarioContrato.COLUMNS_NAME,
+                null,null,null
+        );
+
+        if(cursor!=null) {
+
+            while (cursor.moveToNext()) {
+                Log.d("USUARIOCONTENTPROVIDER",
+                        cursor.getInt(0) + " - " + cursor.getString(1)
+                );
+            }
+        }else{
+            Log.d("USUARIOCONTENTPROVIDER",
+                    "NO DEVUELVE"
+            );
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,25 +54,41 @@ public class MainActivity extends AppCompatActivity {
                 );
             }
         }
-        Cursor cursor = getContentResolver().query(
-                UsuarioContrato.CONTENT_URI,
-                UsuarioContrato.COLUMNS_NAME,
-                null,null,null
+
+        consultarContentProvider();
+
+        findViewById(R.id.btnInsert).setOnClickListener(
+                view -> {
+                /*
+                    ContentValues cv = new ContentValues();
+                    cv.put(UsuarioContrato.COLUMN_FIRSTNAME, "Pedro");
+                    cv.put(UsuarioContrato.COLUMN_LASTNAME, "Dominguez");
+
+                    Uri uriInsert = getContentResolver().insert(
+                            UsuarioContrato.CONTENT_URI,
+                            cv
+                    );
+
+                    Toast.makeText(this, "Usuario insert: \n"+
+                            uriInsert.toString(), Toast.LENGTH_SHORT).show();
+*/
+                    ContentValues cv = new ContentValues();
+                    cv.put(UsuarioContrato.COLUMN_FIRSTNAME, "Pablo");
+                    cv.put(UsuarioContrato.COLUMN_LASTNAME, "Dominguez");
+
+                    int affectados = getContentResolver().update(
+                            Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, "10") ,
+                            cv,
+                            null,
+                            null
+                    );
+
+                    Toast.makeText(this, "Usuarios afectados: \n"+
+                            affectados, Toast.LENGTH_SHORT).show();
+
+
+                }
         );
-
-        if(cursor!=null) {
-
-
-            while (cursor.moveToNext()) {
-                Log.d("USUARIOCONTENTPROVIDER",
-                        cursor.getInt(0) + " - " + cursor.getString(1)
-                );
-            }
-        }else{
-            Log.d("USUARIOCONTENTPROVIDER",
-                    "NO DEVUELVE"
-            );
-        }
 
     }
 }
