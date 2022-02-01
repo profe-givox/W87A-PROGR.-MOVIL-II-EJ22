@@ -156,8 +156,9 @@ public class MiContentProvider extends ContentProvider {
         List<User> usuarioUpdate  =  dao.loadAllByIds(new int[]{id});
 
         usuarioUpdate.get(0).firstName =
-                contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME
-        );
+                contentValues.getAsString(UsuarioContrato.COLUMN_FIRSTNAME );
+        usuarioUpdate.get(0).lastName =
+                contentValues.getAsString(UsuarioContrato.COLUMN_LASTNAME );
 
         return dao.updateUser(usuarioUpdate.get(0));
     }

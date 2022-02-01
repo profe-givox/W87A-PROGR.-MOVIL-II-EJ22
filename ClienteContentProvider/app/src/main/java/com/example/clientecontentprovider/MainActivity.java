@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         if(cursor!=null) {
 
             while (cursor.moveToNext()) {
-                Log.d("USUARIOCONTENTPROVIDER",
+                Log.d("CPCliente",
                         cursor.getInt(0) + " - " + cursor.getString(1)
                 );
             }
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btnInsert).setOnClickListener(
                 view -> {
-                /*
+
                     ContentValues cv = new ContentValues();
                     cv.put(UsuarioContrato.COLUMN_FIRSTNAME, "Pedro");
                     cv.put(UsuarioContrato.COLUMN_LASTNAME, "Dominguez");
@@ -68,27 +68,39 @@ public class MainActivity extends AppCompatActivity {
                             UsuarioContrato.CONTENT_URI,
                             cv
                     );
-
+                    Log.d("CPCliente", uriInsert.toString() );
                     Toast.makeText(this, "Usuario insert: \n"+
                             uriInsert.toString(), Toast.LENGTH_SHORT).show();
-*/
-                    ContentValues cv = new ContentValues();
-                    cv.put(UsuarioContrato.COLUMN_FIRSTNAME, "Pablo");
-                    cv.put(UsuarioContrato.COLUMN_LASTNAME, "Dominguez");
-
-                    int affectados = getContentResolver().update(
-                            Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, "10") ,
-                            cv,
-                            null,
-                            null
-                    );
-
-                    Toast.makeText(this, "Usuarios afectados: \n"+
-                            affectados, Toast.LENGTH_SHORT).show();
 
 
                 }
         );
+
+
+        findViewById(R.id.btnUpdate).setOnClickListener(
+                view -> {
+
+                    ContentValues cv = new ContentValues();
+                    cv.put(UsuarioContrato.COLUMN_FIRSTNAME, "Pablo");
+                    cv.put(UsuarioContrato.COLUMN_LASTNAME, "Herrera");
+
+                    int elemtosAfectados = getContentResolver().update(
+                            Uri.withAppendedPath(UsuarioContrato.CONTENT_URI, "15")   ,
+                            cv,
+                            null, null
+                    );
+
+                    Log.d("CPCliente", "Elementos afectados: " +elemtosAfectados );
+                    Toast.makeText(this, "Usuario update: \n"+
+                            elemtosAfectados, Toast.LENGTH_SHORT).show();
+
+
+                }
+        );
+
+        findViewById(R.id.btnConsultar).setOnClickListener(v -> {
+            consultarContentProvider();
+        });
 
     }
 }
