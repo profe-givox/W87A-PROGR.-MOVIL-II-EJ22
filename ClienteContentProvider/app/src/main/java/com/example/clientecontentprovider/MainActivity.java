@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(cursor!=null) {
 
-            while (cursor.moveToNext()) {
+            while (cursor.moveToNext()) {   
                 Log.d("CPCliente",
                         cursor.getInt(0) + " - " + cursor.getString(1)
                 );
