@@ -3,6 +3,7 @@ package net.ivanvega.peticionesredhttpa;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -10,12 +11,25 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     TextView txt ;
-
+    RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +41,13 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnStringReq).setOnClickListener(v->stringRequest());
         findViewById(R.id.btnJsonReq).setOnClickListener(v->jsonRequest());
 
+        queue = Volley.newRequestQueue(this);
 
     }
 
     private void stringRequest() {
         // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
+
         String url ="http://www.google.com";
 
         // Request a string response from the provided URL.
@@ -57,6 +72,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void jsonRequest() {
+        JsonRequest jsonRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                "https://jsonplaceholder.typicode.com/albums",
+                null, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Gson gson = new Gson();
+                        Type lsAlbumType = new TypeToken<List<Album>>(){}.getType();
+
+                        List<Album> lsAlbum =  gson.fromJson(response.toString(), lsAlbumType);
+
+                        for (Album item:  lsAlbum){
+                            Log.d("JSONREQUEST", "Id: " + item.id + " title: " +
+                                    item.getTitle());
+                        }
+
+                        for (int i=0; i< response.length(); i++){
+                            try {
+                                JSONObject e = response.getJSONObject(i);
+                                Log.d("JSONREQUESTMAPA", "Id: " + e.getInt("id") + " title: " +
+                                        e.getString("title") );
+                            } catch (JSONException jsonException) {
+                                jsonException.printStackTrace();
+                            }
+                        }
+                    }
+        },
+                error -> {
+                    error.printStackTrace();
+                }
+        );
+
+        queue.add(jsonRequest);
         /*
         Gson gson = new Gson();
 
@@ -67,4 +115,9 @@ public class MainActivity extends AppCompatActivity {
                 listType);
 
     */}
+
+    void requestImageMethod(){
+
+    }
+
 }
