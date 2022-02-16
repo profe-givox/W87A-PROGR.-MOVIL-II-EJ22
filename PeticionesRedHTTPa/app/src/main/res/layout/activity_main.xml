@@ -29,5 +29,17 @@
         android:layout_height="wrap_content"
         android:text="JsonRequest"></Button>
 
+    <Button
+        android:id="@+id/btnImgReq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ImageRequest"></Button>
+
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgVoll"
+        ></androidx.constraintlayout.utils.widget.ImageFilterView>
+
 
 </LinearLayout>

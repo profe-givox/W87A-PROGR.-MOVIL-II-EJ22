@@ -2,9 +2,11 @@ package net.ivanvega.peticionesredhttpa;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -30,6 +32,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     TextView txt ;
     RequestQueue queue;
+    ImageView miImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +40,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         txt = findViewById(R.id.txt);
-
+        miImg = findViewById(R.id.imgVoll);
         findViewById(R.id.btnStringReq).setOnClickListener(v->stringRequest());
         findViewById(R.id.btnJsonReq).setOnClickListener(v->jsonRequest());
+        findViewById(R.id.btnImgReq).setOnClickListener(v->requestImageMethod());
 
         queue = Volley.newRequestQueue(this);
+
+
 
     }
 
@@ -117,7 +123,22 @@ public class MainActivity extends AppCompatActivity {
     */}
 
     void requestImageMethod(){
+        ImageRequest imgReq = new
+                ImageRequest("https://via.placeholder.com/150/771796",
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        miImg.setImageBitmap(response);
+                    }
 
+                    },200,200,
+                ImageView.ScaleType.CENTER,
+                Bitmap.Config.ALPHA_8,
+                error -> {
+                    error.printStackTrace();
+                }
+                );
+        MySingleton.getInstance(this).addToRequestQueue(imgReq);
     }
 
 }
