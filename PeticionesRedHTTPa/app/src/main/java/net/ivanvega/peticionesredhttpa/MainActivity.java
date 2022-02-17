@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     void requestImageMethod(){
         ImageRequest imgReq = new
-                ImageRequest("https://via.placeholder.com/150/771796",
+                ImageRequest("https://umhandroid.momrach.es/wp-content/uploads/2020/05/android_volley.jpeg",
                 new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
