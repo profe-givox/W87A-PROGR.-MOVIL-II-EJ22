@@ -18,8 +18,15 @@ public class MainActivity extends AppCompatActivity
     SensorManager sensorManager;
     TextView txtProximi, txtLuz;
 
+    Sensor sensorProximidad, sensorLuz;   //sensores de ambiente
 
-    Sensor sensorProximidad, sensorLuz;
+    Sensor sensorCampoMagnetico, sensorAcelermeter   ; //Posicionamiento
+
+    private final float[] accelerometerReading = new float[3];
+    private final float[] magnetometerReading = new float[3];
+    private boolean mLastAccelerometerSet=false;
+    private boolean mLastMagnetometerSet=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,8 @@ public class MainActivity extends AppCompatActivity
                 sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         sensorLuz = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
+        sensorAcelermeter = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorCampoMagnetico = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
     }
 
@@ -59,6 +68,15 @@ public class MainActivity extends AppCompatActivity
         if(sensorLuz!=null){
             sensorManager.registerListener(sensorEventListenerAmbiental,
                     sensorLuz, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        if(sensorCampoMagnetico!=null){
+            sensorManager.registerListener(this,
+                    sensorCampoMagnetico, SensorManager.SENSOR_DELAY_UI);
+        }
+        if(sensorAcelermeter!=null){
+            sensorManager.registerListener(this,
+                    sensorAcelermeter, SensorManager.SENSOR_DELAY_UI);
         }
     }
 
@@ -94,6 +112,29 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        switch (sensorEvent.sensor.getType()){
+            case Sensor.TYPE_ACCELEROMETER:
+                  System.arraycopy(sensorEvent.values, 0, 
+                          accelerometerReading, 0, accelerometerReading.length);
+                  mLastAccelerometerSet = true;
+                
+            break;
+
+            case Sensor.TYPE_MAGNETIC_FIELD:
+                System.arraycopy(sensorEvent.values, 0,
+                        magnetometerReading, 0, magnetometerReading.length);
+                mLastMagnetometerSet = true;
+                break;
+            
+        }
+
+        if(mLastAccelerometerSet && mLastMagnetometerSet){
+            updateOrientationAngles();
+        }
+
+    }
+
+    private void updateOrientationAngles() {
 
     }
 
