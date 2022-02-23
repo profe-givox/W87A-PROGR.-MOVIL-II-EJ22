@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.List;
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity
     private boolean mLastAccelerometerSet=false;
     private boolean mLastMagnetometerSet=false;
 
+    private final float[] rotationMatrix = new float[9];
+    private final float[] orientationAngles = new float[3];
+    private TextView txtOrientarion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         txtProximi = findViewById(R.id.txtProximidad);
         txtLuz = findViewById(R.id.txtLuz);
+         txtOrientarion = findViewById(R.id.txtOrientacion);
 
         sensorManager = (SensorManager)
                 getSystemService(Context.SENSOR_SERVICE);
@@ -135,6 +141,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateOrientationAngles() {
+        SensorManager.getRotationMatrix(rotationMatrix, null,
+                accelerometerReading, magnetometerReading);
+
+        SensorManager.getOrientation(rotationMatrix, orientationAngles );
+
+             float azimuthRadians = orientationAngles[0];
+
+             float azimuthDegrees = (float)(Math.toDegrees(azimuthRadians)+360) % 360;
+
+             txtOrientarion.setText("Orientacion: " + azimuthDegrees );
 
     }
 
