@@ -3,12 +3,16 @@ package net.ivanvega.missensores2022a;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,11 +39,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        int xpos, ypos;
+        float xacc, yacc, zacc;
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+        MiVista micanchapelota = new MiVista(this);
+        setContentView(micanchapelota);
         txtProximi = findViewById(R.id.txtProximidad);
         txtLuz = findViewById(R.id.txtLuz);
          txtOrientarion = findViewById(R.id.txtOrientacion);
+
+         Display display =
+                 getWindowManager().getDefaultDisplay();
 
         sensorManager = (SensorManager)
                 getSystemService(Context.SENSOR_SERVICE);
@@ -158,4 +170,30 @@ public class MainActivity extends AppCompatActivity
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
+
+    class MiVista extends View{
+
+        Paint lapiz= new Paint();
+
+        public MiVista(Context context) {
+            super(context);
+
+        }
+
+        @Override
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+            int   xpos,ypos;
+            lapiz.setColor(1);
+            canvas.drawLine(
+                    23,45,66,55,
+                    lapiz
+            );
+
+            invalidate();
+        }
+    }
+
+
 }
