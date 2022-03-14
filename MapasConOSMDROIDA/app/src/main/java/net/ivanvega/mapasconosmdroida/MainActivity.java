@@ -5,8 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -29,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private MyLocationNewOverlay mLocationOverlay;
     private RotationGestureOverlay mRotationGestureOverlay;
 
+    private RequestQueue queue;
+    private JsonObjectRequest requestMapRequest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
-        map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
 
         IMapController mapController = map.getController();
@@ -121,6 +133,69 @@ public class MainActivity extends AppCompatActivity {
         //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         map.onResume(); //needed for compass, my location overlays, v6.0.0 and up
+        obtenerRouteFromMapRequest();
+    }
+
+    private void obtenerRouteFromMapRequest(){
+        queue =
+                Volley.newRequestQueue(this);
+
+//        StringRequest request = new StringRequest(
+//                "http://www.mapquestapi.com/directions/v2/route?key=MI-KEY&from=20.14649016556056,-101.17566401392817&to=20.126496094732943,-101.19317063853653",
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.d("GIVO", "se ejecuto");
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.d("GIVO", "se ejecuto con errror");
+//                    }
+//                }
+//        );
+
+        requestMapRequest =
+                new JsonObjectRequest(
+                        "http://www.mapquestapi.com/directions/v2/route?key=MIKEY&from=20.14649016556056,-101.17566401392817&to=20.126496094732943,-101.19317063853653",
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d("GIVO", "se ejecuto");
+                                try {
+                                    JSONArray indicaiones =  response.getJSONObject("route")
+                                            .getJSONArray("legs")
+                                            .getJSONObject(0).
+                                                    getJSONArray("maneuvers");
+
+
+
+                                    for( int i =0 ;  i <indicaiones.length(); i++){
+                                        JSONObject indi = indicaiones.getJSONObject(i);
+                                        String strlatlog = indi.getJSONObject("startPoint").get("lat").toString()
+                                                + "," +
+                                                indi.getJSONObject("startPoint").get("lng").toString();
+
+                                        Log.d("GIVO", "se ejecuto: " +  strlatlog );
+
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("GIVO", "se ejecuto CON ERROR");
+
+                            }
+                        }
+                );
+
+        queue.add(requestMapRequest);
     }
 
     @Override
