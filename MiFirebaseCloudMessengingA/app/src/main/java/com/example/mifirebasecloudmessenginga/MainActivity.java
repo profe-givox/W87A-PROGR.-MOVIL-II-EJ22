@@ -22,6 +22,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recuperarToken();
+
+        suscribirTopico();
+    }
+
+    private void suscribirTopico() {
+
+        FirebaseMessaging.getInstance().subscribeToTopic("perronegro")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "exito";
+                        if (!task.isSuccessful()) {
+                            msg = "no exito";
+                        }
+                        Log.d(TAG, msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 
     private void recuperarToken() {
@@ -33,16 +52,12 @@ public class MainActivity extends AppCompatActivity {
                             Log.w(TAG, "Fetching FCM registration token failed", task.getException());
                             return;
                         }
-
                         // Get new FCM registration token
                         String token = task.getResult();
-
                         // Log and toast
-
                         Log.d(TAG, token);
                         Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
 }
